@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Petunjuk Cara Bermain - Etnomatematika</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&family=Nunito:wght@700;900&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    
+    <style>
+        :root {
+            --primary-color: #FF6B6B;
+            --secondary-color: #4ECDC4;
+            --bg-color: #F7FFF7;
+            --card-bg: #FFFFFF;
+            --accent-color: #FFE66D;
+            --warna-biru: #4cc9f0;
+            --warna-hijau: #4caf50;
+            --warna-oranye: #ff9f1c;
+            --warna-ungu: #9d4edd;
+            --warna-pink: #ff70a6;
+            --warna-teks: #2b2d42;
+        }
+
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background-color: #e0f2fe; 
+            background-image: radial-gradient(#bae6fd 2px, transparent 2px);
+            background-size: 30px 30px;
+            color: #2D3436;
+            min-height: 100vh;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* --- LOGIKA ANIMASI MENGAPUNG (IDENTIK DENGAN REFERENSI) --- */
+        .floating-element {
+            display: inline-block;
+            position: absolute;
+            pointer-events: none;
+            user-select: none;
+            animation: float 4s ease-in-out infinite;
+            z-index: 1;
+            font-family: 'Nunito', sans-serif;
+            font-weight: 900;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+        }
+
+        .bg-math-10 { color: rgba(59, 130, 246, 0.10); }
+        .bg-math-15 { color: rgba(59, 130, 246, 0.14); }
+        .bg-trophy-10 { color: rgba(234, 179, 8, 0.10); }
+
+        .text-4xl-custom { font-size: 2.25rem; }
+        .text-5xl-custom { font-size: 3rem; }
+        .text-6xl-custom { font-size: 3.75rem; }
+
+        /* --- HEADER MINIMALIS REFF KUIS --- */
+        header {
+            background-color: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            text-align: center;
+            border-bottom: 5px solid var(--accent-color);
+            position: relative;
+            width: 100%;
+            z-index: 100;
+        }
+
+        header h1 {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.5rem;
+            margin: 0;
+            color: #2D3436;
+        }
+
+        .btn-home-top {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #FFD93D;
+            color: #2D3436;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 50px;
+            font-weight: bold;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            text-decoration: none;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* --- KONTEN UTAMA & GRID BESAR --- */
+        .game-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 30px 20px;
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .guide-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .guide-card {
+            background: white;
+            border-radius: 30px;
+            padding: 30px 25px;
+            text-align: left;
+            box-shadow: 0 12px 0 rgba(0, 0, 0, 0.05);
+            border: 5px solid transparent;
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            text-decoration: none;
+            color: #2D3436;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .guide-card:hover {
+            transform: translateY(-8px) scale(1.01);
+            color: #2D3436;
+        }
+
+        .step-number {
+            color: white;
+            font-size: 1.6rem;
+            font-weight: bold;
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            box-shadow: 0 4px 0 rgba(0,0,0,0.1);
+        }
+
+        .guide-content h3 {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-top: 0;
+            margin-bottom: 6px;
+        }
+
+        .guide-content p {
+            font-size: 1rem;
+            color: #555;
+            line-height: 1.5;
+            margin-bottom: 0;
+        }
+
+        /* Variasi Border & Warna Tema Langkah */
+        .langkah-1 { border-color: var(--warna-biru); }
+        .langkah-1 .step-number { background-color: var(--warna-biru); }
+        .langkah-1 h3 { color: var(--warna-biru); }
+
+        .langkah-2 { border-color: var(--warna-hijau); }
+        .langkah-2 .step-number { background-color: var(--warna-hijau); }
+        .langkah-2 h3 { color: var(--warna-hijau); }
+
+        .langkah-3 { border-color: var(--warna-oranye); }
+        .langkah-3 .step-number { background-color: var(--warna-oranye); }
+        .langkah-3 h3 { color: var(--warna-oranye); }
+
+        .langkah-4 { border-color: var(--warna-ungu); }
+        .langkah-4 .step-number { background-color: var(--warna-ungu); }
+        .langkah-4 h3 { color: var(--warna-ungu); }
+
+        .langkah-5 { border-color: var(--warna-pink); }
+        .langkah-5 .step-number { background-color: var(--warna-pink); }
+        .langkah-5 h3 { color: var(--warna-pink); }
+
+        .langkah-6 { border-color: var(--primary-color); }
+        .langkah-6 .step-number { background-color: var(--primary-color); }
+        .langkah-6 h3 { color: var(--primary-color); }
+
+        /* Musik */
+        .music-control {
+            position: fixed;
+            top: 75px;
+            right: 20px;
+            z-index: 100;
+            background: white;
+            padding: 8px 12px;
+            border-radius: 50px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .music-btn { border: none; background: none; cursor: pointer; }
+
+        @media (max-width: 768px) {
+            .guide-grid { grid-template-columns: 1fr; gap: 15px; }
+            .btn-home-top { left: 10px; padding: 5px 10px; font-size: 0.7rem; }
+            .music-control { top: auto; bottom: 20px; right: 20px; }
+            .guide-card { padding: 20px 15px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="floating-element bg-math-10 text-5xl-custom" style="top: 5%; left: 4%;">1</div>
+    <div class="floating-element bg-math-15 text-5xl-custom" style="top: 15%; left: 12%; animation-delay: 0.4s;">+</div>
+    <div class="floating-element bg-math-15 text-4xl-custom" style="top: 28%; left: 3%; animation-delay: 0.8s;"><i class="fas fa-calculator"></i></div>
+    <div class="floating-element bg-math-10 text-6xl-custom" style="top: 16%; right: 25%; animation-delay: 1.9s;">?</div>
+
+    <div class="music-control">
+        <button onclick="toggleMusic()" class="music-btn" id="musicBtn">🔊</button>
+        <span style="font-size: 0.8rem; font-weight: bold;" id="musicStatus">MUSIC AKTIF</span>
+    </div>
+
+    <audio id="bgMusic" loop autoplay>
+        <source src="laguku.mp3" type="audio/mpeg">
+    </audio>
+
+    <header>
+        <a href="awal.html" class="btn-home-top">🏠 Beranda</a>
+        <h1>Petunjuk Cara Bermain</h1>
+    </header>
+
+    <div class="game-container">
+        
+        <div class="guide-grid">
+            
+            <a href="index.html" class="guide-card langkah-1">
+                <div class="step-number">1</div>
+                <div class="guide-content">
+                    <h3>Halaman Pertama</h3>
+                    <p>Saat membuka link , kamu akan melihat logo media, judul, nama pengembang, serta tombol <strong>Mulai Jelajah</strong> untuk menuju menu utama media pembelajaran.</p>
+                </div>
+            </a>
+
+            <a href="awal.html" class="guide-card langkah-2">
+                <div class="step-number">2</div>
+                <div class="guide-content">
+                    <h3>Menu Utama</h3>
+                    <p>Di halaman menu utama ditampilkan logo media serta beberapa tombol pilihan fitur: <strong>Capaian Pembelajaran, Materi Operasi Hitung, Petunjuk Cara Bermain, dan Soal Latihan</strong>.</p>
+                </div>
+            </a>
+
+            <a href="petunjuk.html" class="guide-card langkah-3">
+                <div class="step-number">3</div>
+                <div class="guide-content">
+                    <h3>Petunjuk Belajar</h3>
+                    <p>Menampilkan panduan lengkap menggunakan media flash card digital, seperti <strong>cara berpindah kartu, melihat jawaban, dan mengerjakan latihan secara mudah dan mandiri.</strong></p>
+                </div>
+            </a>
+
+            <a href="cp.html" class="guide-card langkah-4">
+                <div class="step-number">4</div>
+                <div class="guide-content">
+                    <h3>Capaian Pembelajaran (CP & TP)</h3>
+                    <p>Halaman ini menunjukkan CP dan TP berbasis etnomatematika agar Guru atau Pengguna dapat mengetahui secara jelas <strong>tujuan dari media pembelajaran ini.</strong> </p>
+                </div>
+            </a>
+
+            <a href="materi.html" class="guide-card langkah-5">
+                <div class="step-number">5</div>
+                <div class="guide-content">
+                    <h3>Materi & Etnomatematika</h3>
+                    <p>Yuk belajar operasi hitung yang dikaitkan budaya lokal, seperti  <strong>menghitung jumlah buah di pasar tradisional atau jajanan dengan gambar konkret dan bahasa sederhana kelas I SD.</strong> </p>
+                </div>
+            </a>
+
+            <a href="flashcard.html" class="guide-card langkah-6">
+                <div class="step-number">6</div>
+                <div class="guide-content">
+                    <h3>Latihan Soal & Flash Card</h3>
+                    <p>Siswa diminta menjawab soal pertambahan dan pengurangan. Setiap pilihan jawaban akan mendapatkan umpan balik langsung berupa <strong>informasi benar/salah disertai skor.</strong></p>
+                </div>
+            </a>
+
+        </div>
+    </div>
+
+    <script>
+        const music = document.getElementById('bgMusic');
+        const musicBtn = document.getElementById('musicBtn');
+        const musicStatus = document.getElementById('musicStatus');
+        let musicPlaying = true;
+
+        window.addEventListener('load', () => {
+            music.volume = 0.5;
+            music.play().catch(() => {
+                musicBtn.innerText = "🔇";
+                musicStatus.innerText = "MUSIC MATI";
+                musicPlaying = false;
+            });
+        });
+
+        function toggleMusic() {
+            if (musicPlaying) {
+                music.pause();
+                musicBtn.innerText = "🔇";
+                musicStatus.innerText = "MUSIC MATI";
+            } else {
+                music.play();
+                musicBtn.innerText = "🔊";
+                musicStatus.innerText = "MUSIC AKTIF";
+            }
+            musicPlaying = !musicPlaying;
+        }
+    </script>
+</body>
+</html>

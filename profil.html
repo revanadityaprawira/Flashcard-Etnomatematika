@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profil Pengembang - Professional Edition</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- AOS Animation -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: #0f172a;
+            color: #f1f5f9;
+            overflow-x: hidden;
+        }
+
+        /* Animated Elegant Background */
+        .bg-vibrant-animate {
+            background: linear-gradient(-45deg, #0f172a, #1e1b4b, #1e293b, #0f172a);
+            background-size: 400% 400%;
+            animation: gradientMove 15s ease infinite;
+            min-height: 100vh;
+        }
+
+        @keyframes gradientMove {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Glassmorphism with Subtle Glow */
+        .glass-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+            position: relative;
+        }
+
+        /* Professional Profile Ring */
+        .profile-ring {
+            position: relative;
+            padding: 4px;
+            background: linear-gradient(45deg, #6366f1, #06b6d4);
+            border-radius: 50%;
+        }
+
+        /* Elegant Info Icons */
+        .icon-box-1 { background: rgba(99, 102, 241, 0.15); color: #818cf8; }
+        .icon-box-2 { background: rgba(6, 182, 212, 0.15); color: #22d3ee; }
+        .icon-box-3 { background: rgba(139, 92, 246, 0.15); color: #a78bfa; }
+        .icon-box-4 { background: rgba(245, 158, 11, 0.15); color: #fbbf24; }
+
+        .info-hover:hover {
+            background: rgba(255, 255, 255, 0.03);
+            transform: translateY(-2px);
+        }
+
+        /* Interactive Professional Button */
+        .btn-magic {
+            background: linear-gradient(45deg, #4f46e5, #0891b2);
+            transition: all 0.3s ease;
+        }
+
+        .btn-magic:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.1);
+            box-shadow: 0 10px 20px rgba(79, 70, 229, 0.3);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { 
+            background: #334155; 
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="bg-vibrant-animate flex items-center justify-center p-4 md:p-12">
+
+    <div class="container max-w-5xl mx-auto">
+        <div class="glass-card rounded-[2.5rem] overflow-hidden lg:flex" data-aos="zoom-in" data-aos-duration="1000">
+            
+            <!-- Sisi Kiri: Profil Visual -->
+            <div class="lg:w-2/5 p-10 flex flex-col items-center justify-center text-center border-b lg:border-b-0 lg:border-r border-white/5 relative overflow-hidden">
+                <div class="profile-ring mb-8" data-aos="scale-up" data-aos-delay="300">
+                    <div class="w-44 h-44 rounded-full overflow-hidden bg-slate-900">
+                        <img src="fotoku.jpeg" 
+                             alt="Ida Bagus Daniswara" 
+                             class="w-full h-full object-cover">
+                    </div>
+                </div>
+                
+                <h1 class="text-4xl font-extrabold mb-2 tracking-tight text-white">
+                    Ida Bagus Daniswara
+                </h1>
+                <p class="text-indigo-400 font-medium mb-8 tracking-widest text-xs uppercase">
+                    Developer & Peneliti Muda
+                </p>
+
+                <button onclick="popConfetti()" class="btn-magic px-8 py-4 text-white rounded-2xl text-sm font-bold flex items-center gap-3">
+                    <i class="fas fa-paper-plane"></i> Sapa Pengembang
+                </button>
+
+                <div class="mt-10 space-y-1">
+                    <p class="text-xs text-slate-500 font-bold uppercase tracking-tighter">Universitas</p>
+                    <p class="text-sm text-slate-300">Universitas Pendidikan Ganesha</p>
+                </div>
+            </div>
+
+            <!-- Sisi Kanan: Detail Informasi -->
+            <div class="lg:w-3/5 p-8 lg:p-14 space-y-12 bg-slate-900/30">
+                
+                <!-- Info Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6" data-aos="fade-left" data-aos-delay="500">
+                    <div class="info-hover p-5 rounded-3xl border border-white/5 transition-all duration-300 flex items-center gap-5">
+                        <div class="w-12 h-12 rounded-2xl flex items-center justify-center icon-box-1 text-xl">
+                            <i class="fas fa-id-badge"></i>
+                        </div>
+                        <div>
+                            <p class="text-indigo-400 text-[10px] font-black uppercase">NIM</p>
+                            <p class="text-white font-bold tracking-wide">2211031469</p>
+                        </div>
+                    </div>
+
+                    <div class="info-hover p-5 rounded-3xl border border-white/5 transition-all duration-300 flex items-center gap-5">
+                        <div class="w-12 h-12 rounded-2xl flex items-center justify-center icon-box-2 text-xl">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <div>
+                            <p class="text-cyan-400 text-[10px] font-black uppercase">Email</p>
+                            <p class="text-white font-bold text-sm">daniswara.pidada@gmail.com</p>
+                        </div>
+                    </div>
+
+                    <div class="info-hover p-5 rounded-3xl border border-white/5 transition-all duration-300 flex items-center gap-5">
+                        <div class="w-12 h-12 rounded-2xl flex items-center justify-center icon-box-3 text-xl">
+                            <i class="fas fa-graduation-cap"></i>
+                        </div>
+                        <div>
+                            <p class="text-purple-400 text-[10px] font-black uppercase">Program Studi</p>
+                            <p class="text-white font-bold text-sm">S1 Pendidikan Guru SD</p>
+                        </div>
+                    </div>
+
+                    <div class="info-hover p-5 rounded-3xl border border-white/5 transition-all duration-300 flex items-center gap-5">
+                        <div class="w-12 h-12 rounded-2xl flex items-center justify-center icon-box-4 text-xl">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        <div>
+                            <p class="text-amber-400 text-[10px] font-black uppercase">Lokasi</p>
+                            <p class="text-white font-bold text-sm">Buleleng, Bali</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Deskripsi -->
+                <div class="relative p-8 rounded-3xl bg-slate-800/40 border-l-4 border-indigo-500" data-aos="fade-up" data-aos-delay="700">
+                    <h2 class="text-xl font-bold text-white mb-4">
+                        Visi Pengembangan
+                    </h2>
+                    <div class="text-slate-400 text-sm leading-relaxed font-medium">
+                        <p>
+                            Sebagai pengembang media pembelajaran di era digital, fokus utama saya adalah menjembatani teori pendidikan dengan teknologi interaktif. Melalui skripsi ini, saya menghadirkan solusi media yang tidak hanya informatif, tetapi juga menggugah rasa ingin tahu siswa sekolah dasar.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Subtle Tags -->
+                <div class="flex flex-wrap gap-3" data-aos="fade-up" data-aos-delay="800">
+                    <span class="px-4 py-2 rounded-xl bg-slate-800 border border-white/5 text-slate-400 text-[10px] font-bold uppercase tracking-widest">Digital Learning</span>
+                    <span class="px-4 py-2 rounded-xl bg-slate-800 border border-white/5 text-slate-400 text-[10px] font-bold uppercase tracking-widest">Educational Tech</span>
+                    <span class="px-4 py-2 rounded-xl bg-slate-800 border border-white/5 text-slate-400 text-[10px] font-bold uppercase tracking-widest">Interactive UI</span>
+                    <span class="px-4 py-2 rounded-xl bg-slate-800 border border-white/5 text-slate-400 text-[10px] font-bold uppercase tracking-widest">UX Research</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- AOS Script -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({
+            once: true,
+            duration: 800
+        });
+
+        function popConfetti() {
+            const colors = ['#6366f1', '#06b6d4', '#ffffff'];
+            confetti({
+                particleCount: 100,
+                spread: 70,
+                origin: { y: 0.6 },
+                colors: colors
+            });
+        }
+    </script>
+
+    
+</body>
+</html>

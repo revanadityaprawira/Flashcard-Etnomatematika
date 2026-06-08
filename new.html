@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Matematika Bali Seru!</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/canvas-confetti/1.6.0/confetti.browser.min.js"></script>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #f8fafc;
+            background-image: radial-gradient(#e2e8f0 1px, transparent 1px);
+            background-size: 30px 30px;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+            padding: 20px;
+        }
+        .card-main {
+            background: white;
+            border-radius: 32px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.08);
+            border: 1px solid #f1f5f9;
+        }
+        .btn-answer {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .btn-answer:hover:not(:disabled) {
+            transform: translateX(8px);
+            background-color: #eff6ff;
+            border-color: #3b82f6;
+        }
+        .correct-btn {
+            background-color: #22c55e !important;
+            color: white !important;
+            border-color: #16a34a !important;
+        }
+        .wrong-btn {
+            background-color: #ef4444 !important;
+            color: white !important;
+            border-color: #dc2626 !important;
+        }
+        .progress-bar-inner {
+            transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+    <div class="max-w-xl w-full card-main p-8 md:p-12">
+        <!-- Start Screen -->
+        <div id="start-screen" class="text-center">
+            <div class="inline-flex items-center justify-center w-20 h-20 bg-blue-50 rounded-3xl mb-6 text-4xl">
+                🔢
+            </div>
+            <h1 class="text-4xl font-bold text-slate-900 mb-3 tracking-tight">Kuis Matematika Bali</h1>
+            <p class="text-slate-500 mb-10 text-lg">Uji kemampuan berhitungmu dengan budaya lokal Bali yang unik.</p>
+            <button onclick="startQuiz()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-5 px-8 rounded-2xl text-xl shadow-xl shadow-blue-200 transition-all active:scale-95">
+                Mulai Kuis Sekarang
+            </button>
+        </div>
+
+        <!-- Quiz Screen -->
+        <div id="quiz-screen" class="hidden">
+            <!-- Header Info -->
+            <div class="flex justify-between items-center mb-6">
+                <span id="progress-text" class="px-4 py-2 bg-slate-100 text-slate-600 rounded-full font-bold text-sm">Soal 1/10</span>
+                <div class="flex items-center gap-2">
+                    <span class="text-slate-400 font-bold text-sm uppercase">Skor</span>
+                    <span id="score-display" class="text-2xl font-bold text-blue-600">0</span>
+                </div>
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="w-full bg-slate-100 rounded-full h-2.5 mb-10">
+                <div id="progress-bar" class="bg-blue-600 h-2.5 rounded-full progress-bar-inner" style="width: 0%"></div>
+            </div>
+
+            <!-- Question Area -->
+            <div id="question-container" class="mb-10">
+                <h2 id="question-text" class="text-2xl md:text-3xl font-bold text-slate-800 mb-8 leading-tight">
+                    Memuat soal...
+                </h2>
+                <div id="options-container" class="space-y-4">
+                    <!-- Buttons will be injected here -->
+                </div>
+            </div>
+
+            <!-- Feedback Area -->
+            <div id="feedback" class="text-center min-h-[40px] mb-6 font-bold text-lg opacity-0 transition-opacity">
+            </div>
+
+            <!-- Action Area -->
+            <button id="next-btn" onclick="nextQuestion()" class="hidden w-full bg-slate-900 hover:bg-black text-white font-bold py-4 rounded-2xl shadow-lg transition-all flex items-center justify-center gap-3">
+                Lanjutkan <span class="text-xl">👉</span>
+            </button>
+        </div>
+
+        <!-- Result Screen -->
+        <div id="result-screen" class="hidden text-center">
+            <h2 class="text-3xl font-bold text-slate-900 mb-8">Hasil Akhir</h2>
+            
+            <div class="relative inline-block mb-10">
+                <div class="w-48 h-48 rounded-full border-8 border-blue-50 flex flex-col items-center justify-center bg-white">
+                    <span class="text-slate-400 font-bold uppercase text-xs tracking-widest">Skor Kamu</span>
+                    <span id="final-score" class="text-6xl font-bold text-blue-600">0</span>
+                </div>
+            </div>
+            
+            <p id="result-message" class="text-xl font-bold text-slate-700 mb-10">Kerja bagus, Pertahankan!</p>
+            
+            <button onclick="resetQuiz()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-5 rounded-2xl text-xl shadow-lg shadow-blue-100 transition-all active:scale-95">
+                Coba Lagi
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                question: "1 Kelan tipat isinya ada 6 ketupat. Jika Ibu membeli 2 Kelan, berapa jumlah ketupat semuanya? 🥟",
+                options: ["8 biji", "10 biji", "12 biji", "14 biji"],
+                answer: 2
+            },
+            {
+                question: "Putu membawa 3 Kawis sate lilit. Jika 1 Kawis berisi 12 tusuk, berapa total sate yang dibawa Putu? 🍢",
+                options: ["24 tusuk", "30 tusuk", "36 tusuk", "40 tusuk"],
+                answer: 2
+            },
+            {
+                question: "Bapak membuat 2 buah Klakat untuk upacara. Satu Klakat butuh 12 potong bambu. Berapa total bambunya? 🎋",
+                options: ["20 potong", "24 potong", "28 potong", "30 potong"],
+                answer: 1
+            },
+            {
+                question: "Canang biasanya diatur dalam kelipatan 2. Jika ada 4 tumpuk canang, mana urutan jumlah yang benar? 🌸",
+                options: ["2, 4, 6, 8", "1, 2, 3, 4", "2, 4, 5, 7", "2, 5, 8, 11"],
+                answer: 0
+            },
+            {
+                question: "Ada 4 Kelan tipat di meja makan. Berapa total ketupat yang ada? (1 Kelan = 6) 🥟",
+                options: ["18 biji", "20 biji", "24 biji", "30 biji"],
+                answer: 2
+            },
+            {
+                question: "Made membeli 5 Kawis sate ayam. Ingat, 1 Kawis itu 12 tusuk. Berapa semua sate Made? 🍡",
+                options: ["50 tusuk", "55 tusuk", "60 tusuk", "65 tusuk"],
+                answer: 2
+            },
+            {
+                question: "Klakat itu anyaman bambu berjumlah 12. Jika kita memiliki 3 Klakat, berapa jumlah seluruh bambunya? 🎋",
+                options: ["30 potong", "36 potong", "40 potong", "42 potong"],
+                answer: 1
+            },
+            {
+                question: "Jika 1 Kelan tipat ada 6 biji, maka kalau ada 10 Kelan, jumlahnya menjadi... 🥟",
+                options: ["50 biji", "60 biji", "70 biji", "100 biji"],
+                answer: 1
+            },
+            {
+                question: "Paman membuat sate kelipatan 12. Jika paman membuat sate sebanyak 4 Kawis, berapa jumlahnya? 🍢",
+                options: ["24", "36", "48", "60"],
+                answer: 2
+            },
+            {
+                question: "Di sebuah banten ada tumpukan canang kelipatan 2. Berapa jumlah canang pada tumpukan ke-5? 🌸",
+                options: ["8", "10", "12", "14"],
+                answer: 1
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let answered = false;
+
+        function startQuiz() {
+            document.getElementById('start-screen').classList.add('hidden');
+            document.getElementById('quiz-screen').classList.remove('hidden');
+            currentQuestionIndex = 0;
+            score = 0;
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            answered = false;
+            const question = questions[currentQuestionIndex];
+            const qText = document.getElementById('question-text');
+            const pText = document.getElementById('progress-text');
+            const pBar = document.getElementById('progress-bar');
+            const sDisplay = document.getElementById('score-display');
+            const nextBtn = document.getElementById('next-btn');
+            const feedback = document.getElementById('feedback');
+
+            qText.innerText = question.question;
+            pText.innerText = `Soal ${currentQuestionIndex + 1}/${questions.length}`;
+            pBar.style.width = `${((currentQuestionIndex + 1) / questions.length) * 100}%`;
+            sDisplay.innerText = score;
+            nextBtn.classList.add('hidden');
+            feedback.classList.add('opacity-0');
+
+            const optionsContainer = document.getElementById('options-container');
+            optionsContainer.innerHTML = '';
+
+            question.options.forEach((option, index) => {
+                const btn = document.createElement('button');
+                btn.className = "btn-answer w-full text-left p-5 rounded-2xl font-bold text-slate-700 bg-white border-2 border-slate-100 flex items-center shadow-sm";
+                btn.innerHTML = `<span class="w-10 h-10 rounded-xl bg-slate-50 text-slate-400 flex items-center justify-center mr-4 text-base group-hover:bg-blue-100">${String.fromCharCode(65 + index)}</span> ${option}`;
+                btn.onclick = () => checkAnswer(index, btn);
+                optionsContainer.appendChild(btn);
+            });
+        }
+
+        function checkAnswer(selectedIndex, btnElement) {
+            if (answered) return;
+            answered = true;
+
+            const question = questions[currentQuestionIndex];
+            const feedback = document.getElementById('feedback');
+            const allButtons = document.querySelectorAll('.btn-answer');
+
+            feedback.classList.remove('opacity-0');
+
+            if (selectedIndex === question.answer) {
+                score += 10;
+                btnElement.classList.add('correct-btn');
+                feedback.innerText = "Luar biasa! Jawaban kamu benar ✨";
+                feedback.className = "text-center min-h-[40px] mb-6 font-bold text-lg text-green-600 opacity-100 transition-opacity";
+                playSfx(true);
+            } else {
+                btnElement.classList.add('wrong-btn');
+                allButtons[question.answer].classList.add('correct-btn');
+                feedback.innerText = "Hampir benar, yuk pelajari lagi konsepnya 📚";
+                feedback.className = "text-center min-h-[40px] mb-6 font-bold text-lg text-red-600 opacity-100 transition-opacity";
+                playSfx(false);
+            }
+
+            document.getElementById('score-display').innerText = score;
+            document.getElementById('next-btn').classList.remove('hidden');
+            allButtons.forEach(btn => btn.disabled = true);
+        }
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) {
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            document.getElementById('quiz-screen').classList.add('hidden');
+            document.getElementById('result-screen').classList.remove('hidden');
+            document.getElementById('final-score').innerText = score;
+            
+            const resultMsg = document.getElementById('result-message');
+
+            if(score >= 80) {
+                resultMsg.innerText = "Luar Biasa! Kamu ahli Matematika Bali!";
+                confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#3b82f6', '#10b981', '#f59e0b'] });
+            } else if (score >= 50) {
+                resultMsg.innerText = "Bagus! Kamu sudah memahami konsep dasar.";
+            } else {
+                resultMsg.innerText = "Tetap semangat! Ayo coba sekali lagi.";
+            }
+        }
+
+        function resetQuiz() {
+            document.getElementById('result-screen').classList.add('hidden');
+            document.getElementById('start-screen').classList.remove('hidden');
+        }
+
+        function playSfx(isCorrect) {
+            const context = new (window.AudioContext || window.webkitAudioContext)();
+            const osc = context.createOscillator();
+            const gain = context.createGain();
+
+            osc.type = 'sine';
+            if (isCorrect) {
+                osc.frequency.setValueAtTime(523, context.currentTime); 
+                osc.frequency.exponentialRampToValueAtTime(880, context.currentTime + 0.1);
+            } else {
+                osc.frequency.setValueAtTime(220, context.currentTime); 
+                osc.frequency.linearRampToValueAtTime(110, context.currentTime + 0.2);
+            }
+
+            gain.gain.setValueAtTime(0.05, context.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, context.currentTime + 0.3);
+
+            osc.connect(gain);
+            gain.connect(context.destination);
+            osc.start();
+            osc.stop(context.currentTime + 0.3);
+        }
+    </script>
+</body>
+</html>

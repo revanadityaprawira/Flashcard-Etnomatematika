@@ -1,0 +1,541 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Media Etnomatematika Interaktif</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- AOS Animation -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
+    <!-- Google Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&family=Nunito:wght@700;900&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Font Awesome for Icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <style>
+      body {
+        font-family: "Plus Jakarta Sans", sans-serif;
+        scroll-behavior: smooth;
+        /* BACKGROUND DASAR DAN DOT PATTERN KONSISTEN */
+        background-color: #e0f2fe; 
+        background-image: radial-gradient(#bae6fd 2px, transparent 2px);
+        background-size: 30px 30px;
+      }
+      .tab-content {
+        display: none;
+      }
+      .tab-content.active {
+        display: block;
+      }
+      .glass-nav {
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+      }
+      .btn-tab.active {
+        background-color: #4f46e5;
+        color: white;
+        box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.3);
+        transform: scale(1.05);
+      }
+      /* Kontrol Musik */
+      .music-control {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 100;
+        background: white;
+        padding: 10px 15px;
+        border-radius: 50px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .music-btn {
+        border: none;
+        background: none;
+        font-size: 1.2rem;
+        cursor: pointer;
+      }
+
+      .music-btn:hover {
+        transform: scale(1.1);
+      }
+
+      .status-badge {
+        font-size: 0.7rem;
+        font-weight: bold;
+      }
+
+      /* Tombol Beranda Kiri Atas */
+      .back-home {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        z-index: 100;
+      }
+
+      /* --- LOGIKA ANIMASI MENGAPUNG BACKGROUND --- */
+      .floating-element {
+        display: inline-block;
+        position: absolute;
+        pointer-events: none;
+        user-select: none;
+        animation: float 4s ease-in-out infinite;
+        z-index: 1;
+        font-family: 'Nunito', sans-serif;
+        font-weight: 900;
+      }
+
+      @keyframes float {
+        0%, 100% { transform: translateY(0px) rotate(0deg); }
+        50% { transform: translateY(-20px) rotate(5deg); }
+      }
+
+      @media (max-width: 576px) {
+        .music-control { top: auto; bottom: 20px; right: 20px; }
+      }
+    </style>
+  </head>
+  <body
+    class="text-slate-900 pb-20 selection:bg-indigo-100 selection:text-indigo-900 relative"
+  >
+
+    <!-- ================= KUMPULAN IKON BACKGROUND MATEMATIKA & KUIS SAMAR ================= -->
+    <div class="floating-element text-blue-500/10 text-5xl font-black" style="top: 5%; left: 4%;">1</div>
+    <div class="floating-element text-blue-400/15 text-5xl font-black" style="top: 15%; left: 12%; animation-delay: 0.4s;">+</div>
+    <div class="floating-element text-blue-400/15 text-4xl" style="top: 28%; left: 3%; animation-delay: 0.8s;"><i class="fas fa-calculator"></i></div>
+    <div class="floating-element text-yellow-500/10 text-4xl" style="top: 6%; left: 22%; animation-delay: 1.2s;"><i class="fas fa-trophy"></i></div>
+    <div class="floating-element text-blue-500/10 text-7xl font-bold" style="top: 20%; left: 25%; animation-delay: 2s;">?</div>
+    <div class="floating-element text-blue-500/15 text-4xl font-black" style="top: 35%; left: 15%; animation-delay: 0.6s;">3</div>
+
+    <div class="floating-element text-blue-400/15 text-6xl font-black" style="bottom: 28%; left: 2%; animation-delay: 1.5s;">−</div>
+    <div class="floating-element text-blue-500/10 text-5xl font-black" style="bottom: 16%; left: 10%; animation-delay: 2.5s;">5</div>
+    <div class="floating-element text-blue-400/10 text-5xl" style="bottom: 4%; left: 4%;"><i class="fas fa-circle"></i></div>
+    <div class="floating-element text-blue-500/15 text-4xl font-black" style="bottom: 6%; left: 20%; animation-delay: 0.9s;">7</div>
+    <div class="floating-element text-blue-400/10 text-4xl" style="bottom: 38%; left: 9%; animation-delay: 1.8s;"><i class="fas fa-shapes"></i></div>
+    <div class="floating-element text-blue-400/15 text-5xl font-black" style="bottom: 22%; left: 24%; animation-delay: 3.1s;">×</div>
+
+    <div class="floating-element text-blue-500/15 text-4xl font-black" style="top: 4%; left: 46%; animation-delay: 1.1s;">2</div>
+    <div class="floating-element text-blue-400/10 text-5xl font-black" style="top: 14%; left: 35%; animation-delay: 2.3s;">=</div>
+    <div class="floating-element text-blue-400/10 text-4xl" style="top: 12%; right: 36%; animation-delay: 0.5s;"><i class="fas fa-triangle-exclamation" style="transform: rotate(180deg);"></i></div>
+    <div class="floating-element text-blue-500/10 text-8xl font-bold" style="bottom: 10%; left: 40%; animation-delay: 1.6s;">?</div>
+    <div class="floating-element text-blue-400/15 text-4xl font-black" style="bottom: 4%; left: 54%; animation-delay: 0.3s;">4</div>
+    <div class="floating-element text-blue-400/10 text-5xl font-black" style="bottom: 16%; right: 38%; animation-delay: 2.8s;">÷</div>
+
+    <div class="floating-element text-yellow-500/10 text-5xl" style="top: 6%; right: 5%; animation-delay: 0.7s;"><i class="fas fa-trophy"></i></div>
+    <div class="floating-element text-blue-500/10 text-5xl font-black" style="top: 18%; right: 14%; animation-delay: 1.3s;">6</div>
+    <div class="floating-element text-blue-400/15 text-5xl font-black" style="top: 4%; right: 24%; animation-delay: 2.1s;">+</div>
+    <div class="floating-element text-blue-400/10 text-4xl" style="top: 28%; right: 3%; animation-delay: 0.2s;"><i class="fas fa-calculator"></i></div>
+    <div class="floating-element text-blue-500/10 text-6xl font-bold" style="top: 16%; right: 25%; animation-delay: 1.9s;">?</div>
+    <div class="floating-element text-blue-400/15 text-5xl font-black" style="top: 36%; right: 14%; animation-delay: 3.0s;">8</div>
+
+    <div class="floating-element text-blue-400/15 text-5xl font-black" style="bottom: 26%; right: 2%; animation-delay: 2.4s;">=</div>
+    <div class="floating-element text-blue-500/10 text-4xl" style="bottom: 14%; right: 12%;"><i class="fas fa-circle"></i></div>
+    <div class="floating-element text-blue-400/15 text-5xl font-black" style="bottom: 4%; right: 5%; animation-delay: 1.4s;">9</div>
+    <div class="floating-element text-blue-400/10 text-6xl font-black" style="bottom: 6%; right: 22%; animation-delay: 0.8s;">−</div>
+    <div class="floating-element text-yellow-500/10 text-4xl" style="bottom: 38%; right: 25%; animation-delay: 1.7s;"><i class="fas fa-trophy"></i></div>
+    <div class="floating-element text-blue-500/10 text-5xl font-black" style="bottom: 22%; right: 23%; animation-delay: 1.5s;">0</div>
+    <!-- =================================================================================================== -->
+
+    <!-- Tombol Kembali ke Beranda -->
+    <div class="back-home">
+      <a
+        href="awal.html"
+        class="flex items-center gap-2 px-4 py-3 bg-white/80 backdrop-blur-md border border-slate-200 rounded-2xl shadow-sm hover:shadow-md hover:bg-white transition-all group"
+      >
+        <i
+          data-lucide="arrow-left"
+          class="w-5 h-5 text-indigo-600 group-hover:-translate-x-1 transition-transform"
+        ></i>
+        <span class="font-bold text-slate-700 text-sm">Kembali</span>
+      </a>
+    </div>
+
+    <!-- Kontrol Musik (DIKEMBALIKAN KE DEFAULT ASLI: DISETEL HIDUP VISUALNYA) -->
+    <div class="music-control">
+      <button
+        id="mBtn"
+        onclick="toggleMusic()"
+        class="music-btn"
+        title="Kontrol Musik"
+      >
+        🔊
+      </button>
+
+      <span class="status-badge" id="musicStatus" style="color: #1e3a8a;"> MUSIK AKTIF </span>
+    </div>
+
+    <!-- Audio Element -->
+    <audio id="bgMusic" loop autoplay muted>
+      <source src="laguku.mp3" type="audio/mpeg" />
+    </audio>
+
+    <!-- Dynamic Background Shapes -->
+    <div class="fixed inset-0 z-0 overflow-hidden pointer-events-none">
+      <div
+        class="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-indigo-200/20 rounded-full blur-[120px]"
+      ></div>
+      <div
+        class="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-purple-200/20 rounded-full blur-[120px]"
+      ></div>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="relative pt-20 pb-12 px-6 overflow-hidden z-10">
+      <div class="max-w-4xl mx-auto text-center" data-aos="fade-down">
+        <span
+          class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-100 text-indigo-700 text-xs font-bold uppercase tracking-widest mb-6 border border-indigo-200"
+        >
+          <i data-lucide="sparkles" class="w-4 h-4"></i> Kurikulum Merdeka •
+          Fase A
+        </span>
+        <h1
+          class="text-5xl md:text-7xl font-extrabold tracking-tight mb-6 bg-clip-text text-transparent bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900"
+        >
+          Capaian & Tujuan <br />
+          <span class="text-indigo-600 italic">Pembelajaran</span>
+        </h1>
+        <p
+          class="text-lg md:text-xl text-slate-600 max-w-2xl mx-auto leading-relaxed"
+        >
+          Matematika Kelas I SD: Penjumlahan & Pengurangan Bilangan Cacah
+          Berbasis Budaya Lokal Bali
+        </p>
+      </div>
+    </section>
+
+    <div class="container mx-auto px-4 relative z-10">
+      <!-- Navigation Tabs -->
+      <div
+        class="flex flex-wrap justify-center gap-2 mb-12 p-2 glass-nav rounded-2xl sticky top-4 z-50 mx-auto max-w-fit shadow-sm"
+      >
+        <button
+          onclick="switchTab('overview')"
+          id="btn-overview"
+          class="btn-tab active flex items-center gap-2 px-5 py-2.5 rounded-xl transition-all duration-300 font-semibold text-sm text-slate-600 hover:text-indigo-600"
+        >
+          <i data-lucide="home" class="w-4 h-4"></i> Ringkasan
+        </button>
+        <button
+          onclick="switchTab('cp')"
+          id="btn-cp"
+          class="btn-tab flex items-center gap-2 px-5 py-2.5 rounded-xl transition-all duration-300 font-semibold text-sm text-slate-600 hover:text-indigo-600"
+        >
+          <i data-lucide="target" class="w-4 h-4"></i> Capaian (CP)
+        </button>
+        <button
+          onclick="switchTab('tp')"
+          id="btn-tp"
+          class="btn-tab flex items-center gap-2 px-5 py-2.5 rounded-xl transition-all duration-300 font-semibold text-sm text-slate-600 hover:text-indigo-600"
+        >
+          <i data-lucide="award" class="w-4 h-4"></i> Tujuan (TP)
+        </button>
+        <button
+          onclick="switchTab('sinergi')"
+          id="btn-sinergi"
+          class="btn-tab flex items-center gap-2 px-5 py-2.5 rounded-xl transition-all duration-300 font-semibold text-sm text-slate-600 hover:text-indigo-600"
+        >
+          <i data-lucide="layers" class="w-4 h-4"></i> Sinergi
+        </button>
+      </div>
+
+      <!-- Main Content -->
+      <main class="max-w-5xl mx-auto">
+        <!-- Tab: Overview -->
+        <div id="overview" class="tab-content active" data-aos="fade-up">
+          <div
+            class="bg-white rounded-[2.5rem] p-8 md:p-12 shadow-xl shadow-slate-200/50 border border-slate-100 flex flex-col md:flex-row items-center gap-10"
+          >
+            <div
+              class="w-24 h-24 md:w-32 md:h-32 bg-indigo-50 rounded-3xl flex items-center justify-center shrink-0"
+            >
+              <i data-lucide="book-open" class="w-12 h-12 text-indigo-600"></i>
+            </div>
+            <div>
+              <h3 class="text-2xl font-bold mb-4">Deskripsi Akademik</h3>
+              <p class="text-slate-600 leading-loose text-lg">
+                CP dan TP ini dirancang sebagai landasan formal pengembangan
+                <span
+                  class="text-indigo-600 font-semibold underline decoration-indigo-200 decoration-4 underline-offset-4"
+                  >Media Kartu Flash Digital</span
+                >. Fokus utama adalah mengintegrasikan
+                <span class="font-bold text-slate-800"
+                  >Etnomatematika Bali</span
+                >
+                untuk memperkenalkan matematika melalui konteks budaya, sehingga
+                pembelajaran terasa lebih nyata dan bermakna bagi siswa kelas I
+                SD.
+              </p>
+              <div class="mt-6 flex flex-wrap gap-4">
+                <div
+                  class="flex items-center gap-2 text-sm font-medium text-slate-500 bg-slate-50 px-3 py-1 rounded-lg"
+                >
+                  <i data-lucide="map-pin" class="w-4 h-4 text-red-400"></i>
+                  Konteks Budaya Bali
+                </div>
+                <div
+                  class="flex items-center gap-2 text-sm font-medium text-slate-500 bg-slate-50 px-3 py-1 rounded-lg"
+                >
+                  <i
+                    data-lucide="chevron-right"
+                    class="w-4 h-4 text-indigo-400"
+                  ></i>
+                  Interaktif Digital
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab: CP -->
+        <div id="cp" class="tab-content" data-aos="fade-up">
+          <div
+            class="bg-gradient-to-br from-indigo-600 to-purple-700 rounded-[2.5rem] p-10 md:p-16 text-white shadow-2xl relative overflow-hidden"
+          >
+            <div class="absolute top-0 right-0 p-8 opacity-10">
+              <i data-lucide="target" style="width: 200px; height: 200px"></i>
+            </div>
+            <div class="relative z-10 max-w-3xl">
+              <div
+                class="w-16 h-16 bg-white/20 backdrop-blur-xl rounded-2xl flex items-center justify-center mb-8"
+              >
+                <i data-lucide="target" class="w-8 h-8"></i>
+              </div>
+              <h2 class="text-3xl font-bold mb-6">Capaian Pembelajaran (CP)</h2>
+              <blockquote
+                class="text-2xl md:text-3xl font-medium leading-relaxed italic border-l-4 border-indigo-300 pl-8"
+              >
+                "Peserta didik mampu memahami konsep bilangan cacah sampai
+                dengan 10 serta melakukan operasi hitung penjumlahan dan
+                pengurangan secara bermakna melalui berbagai representasi, serta
+                mengaitkannya dengan konteks budaya lokal."
+              </blockquote>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab: TP -->
+        <div id="tp" class="tab-content" data-aos="fade-up">
+          <div class="grid md:grid-cols-2 gap-4" id="tp-container">
+            <!-- Items will be injected by JS -->
+          </div>
+        </div>
+
+        <!-- Tab: Sinergi -->
+        <div id="sinergi" class="tab-content" data-aos="fade-up">
+          <div
+            class="bg-slate-900 rounded-[2.5rem] p-10 md:p-16 text-white relative overflow-hidden shadow-2xl"
+          >
+            <div
+              class="absolute -bottom-20 -right-20 w-80 h-80 bg-indigo-500/10 rounded-full blur-3xl"
+            ></div>
+
+            <div class="flex flex-col md:flex-row gap-12 items-center">
+              <div class="md:w-3/5">
+                <h2
+                  class="text-3xl font-bold mb-6 flex items-center gap-3 text-indigo-400"
+                >
+                  <i data-lucide="layers"></i> Sinergi Perancangan Media
+                </h2>
+                <p class="text-slate-400 text-lg leading-relaxed mb-8">
+                  Seluruh butir tujuan pembelajaran di atas merupakan kompas
+                  dalam penyusunan komponen media interaktif. Ketercapaian
+                  poin-poin ini menjadi indikator utama efektivitas media dalam
+                  mendukung kurikulum.
+                </p>
+                <div class="space-y-4">
+                  <div class="flex items-center gap-3 text-slate-300">
+                    <i
+                      data-lucide="check-circle-2"
+                      class="text-emerald-400"
+                    ></i>
+                    Keselarasan dengan Materi Utama
+                  </div>
+                  <div class="flex items-center gap-3 text-slate-300">
+                    <i
+                      data-lucide="check-circle-2"
+                      class="text-emerald-400"
+                    ></i>
+                    Validasi oleh Ahli Pembelajaran
+                  </div>
+                  <div class="flex items-center gap-3 text-slate-300">
+                    <i
+                      data-lucide="check-circle-2"
+                      class="text-emerald-400"
+                    ></i>
+                    Berorientasi pada Karakter Siswa
+                  </div>
+                </div>
+              </div>
+
+              <div class="md:w-2/5 grid grid-cols-2 gap-4">
+                <div
+                  class="bg-white/5 backdrop-blur-lg border border-white/10 p-6 rounded-3xl flex flex-col items-center justify-center gap-3"
+                >
+                  <div class="p-3 rounded-2xl bg-indigo-500 text-white">
+                    <i data-lucide="book-open"></i>
+                  </div>
+                  <span
+                    class="text-xs font-bold uppercase tracking-wider text-white"
+                    >Materi</span
+                  >
+                </div>
+                <div
+                  class="bg-white/5 backdrop-blur-lg border border-white/10 p-6 rounded-3xl flex flex-col items-center justify-center gap-3"
+                >
+                  <div class="p-3 rounded-2xl bg-purple-500 text-white">
+                    <i data-lucide="gamepad-2"></i>
+                  </div>
+                  <span
+                    class="text-xs font-bold uppercase tracking-wider text-white"
+                    >Game</span
+                  >
+                </div>
+                <div
+                  class="bg-white/5 backdrop-blur-lg border border-white/10 p-6 rounded-3xl flex flex-col items-center justify-center gap-3"
+                >
+                  <div class="p-3 rounded-2xl bg-emerald-500 text-white">
+                    <i data-lucide="clipboard-check"></i>
+                  </div>
+                  <span
+                    class="text-xs font-bold uppercase tracking-wider text-white"
+                    >Kuis</span
+                  >
+                </div>
+                <div
+                  class="bg-white/5 backdrop-blur-lg border border-white/10 p-6 rounded-3xl flex flex-col items-center justify-center gap-3"
+                >
+                  <div class="p-3 rounded-2xl bg-amber-500 text-white">
+                    <i data-lucide="layers"></i>
+                  </div>
+                  <span
+                    class="text-xs font-bold uppercase tracking-wider text-white"
+                    >LKPD</span
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- AOS Script -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+      // Initialize AOS
+      AOS.init({
+        duration: 800,
+        once: true,
+        easing: "ease-out-cubic",
+      });
+
+      // Initialize Lucide Icons
+      lucide.createIcons();
+
+      // Data Tujuan Pembelajaran
+      const tpItems = [
+        "Mengenal dan menyebutkan bilangan cacah sampai dengan 10 dengan benar.",
+        "Melakukan operasi penjumlahan melalui media kartu flash digital.",
+        "Melakukan operasi pengurangan secara tepat dan bertahap.",
+        "Mengaitkan konsep operasi hitung dengan konteks budaya lokal Bali.",
+        "Menyelesaikan latihan soal secara mandiri melalui media pembelajaran.",
+        "Menunjukkan sikap aktif dan percaya diri dalam proses belajar.",
+      ];
+
+      // Inject TP Items
+      const tpContainer = document.getElementById("tp-container");
+      tpItems.forEach((text, idx) => {
+        const div = document.createElement("div");
+        div.className =
+          "bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex gap-4 hover:border-indigo-300 transition-all duration-300 hover:-translate-y-1 group cursor-default";
+        div.innerHTML = `
+                <div class="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center font-black shrink-0 group-hover:bg-indigo-600 group-hover:text-white transition-colors">
+                    ${idx + 1}
+                </div>
+                <p class="text-slate-700 font-medium leading-relaxed pt-1">
+                    ${text}
+                </p>
+            `;
+        tpContainer.appendChild(div);
+      });
+
+      // Tab Switching Logic
+      function switchTab(tabId) {
+        document.querySelectorAll(".tab-content").forEach((content) => {
+          content.classList.remove("active");
+        });
+
+        document.querySelectorAll(".btn-tab").forEach((btn) => {
+          btn.classList.remove("active");
+        });
+
+        const activeContent = document.getElementById(tabId);
+        activeContent.classList.add("active");
+
+        document.getElementById(`btn-${tabId}`).classList.add("active");
+
+        AOS.refresh();
+      }
+    </script>
+    
+    <!-- Script Kontrol Musik (KEMBALI KE DEFAULT ASLI: HIDUP DI AWAL) -->
+    <script>
+      const music = document.getElementById("bgMusic");
+      const mBtn = document.getElementById("mBtn");
+      const statusText = document.getElementById("musicStatus");
+
+      // Setelan default disinkronkan ke true agar musik menyala di awal
+      let playing = true;
+
+      window.addEventListener("load", () => {
+        music.muted = false; // Membuka proteksi mute audio
+
+        music.play().then(() => {
+          mBtn.innerText = "🔊";
+          statusText.innerText = "MUSIK AKTIF";
+          statusText.style.color = "#1e3a8a";
+        }).catch(() => {
+          // Jika diblokir oleh kebijakan keamanan autoplay browser, set visual ke kondisi mati sementara
+          playing = false;
+          mBtn.innerText = "🔇";
+          statusText.innerText = "MUSIK MATI";
+          statusText.style.color = "#c0392b";
+        });
+      });
+
+      function toggleMusic() {
+        if (!playing) {
+          music.muted = false; 
+          music.play().catch(() => {});
+
+          mBtn.innerText = "🔊";
+          statusText.innerText = "MUSIK AKTIF";
+          statusText.style.color = "#1e3a8a";
+        } else {
+          music.pause();
+
+          mBtn.innerText = "🔇";
+          statusText.innerText = "MUSIK MATI";
+          statusText.style.color = "#c0392b";
+        }
+
+        playing = !playing;
+      }
+    </script>
+  </body>
+</html>

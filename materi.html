@@ -1,0 +1,835 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Buku Interaktif Etnomatematika Bali - Kelas 1 SD</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&family=Nunito:wght@700;900&family=Patrick+Hand&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <style>
+      :root {
+        --warna-kertas: #fdfaf0;
+        --warna-sampul: #1e3a8a; /* Biru Tua Dominan */
+        --warna-aksen: #3b82f6; /* Biru Muda */
+        --warna-detail: #fbbf24; /* Kuning Emas untuk kontras */
+        --shadow-buku: 0 20px 50px rgba(0, 0, 0, 0.3);
+      }
+
+      body {
+        font-family: "Fredoka", sans-serif;
+        /* MURNI MENYAMAKAN WARNA BASE DAN DOT PATTERN SESUAI REFERENSI */
+        background-color: #e0f2fe; 
+        background-image: radial-gradient(#bae6fd 2px, transparent 2px);
+        background-size: 30px 30px;
+        margin: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        perspective: 2000px;
+        overflow: hidden;
+        position: relative;
+      }
+
+      /* --- LOGIKA ANIMASI MENGAPUNG SEPERTI TAHAP SEBELUMNYA --- */
+      .floating-element {
+        display: inline-block;
+        position: absolute;
+        pointer-events: none;
+        user-select: none;
+        animation: float 4s ease-in-out infinite;
+        z-index: 1;
+        font-family: 'Nunito', sans-serif;
+        font-weight: 900;
+      }
+
+      @keyframes float {
+        0%, 100% { transform: translateY(0px) rotate(0deg); }
+        50% { transform: translateY(-20px) rotate(5deg); }
+      }
+
+      /* KELAS WARNA RGBA IKON BACKROUND SAMAR (OPACITY 10% - 15%) */
+      .bg-math-10 { color: rgba(59, 130, 246, 0.10); }
+      .bg-math-15 { color: rgba(59, 130, 246, 0.14); }
+      .bg-trophy-10 { color: rgba(234, 179, 8, 0.10); }
+
+      /* KUSTOMISASI UKURAN IKON BACKGROUND */
+      .text-4xl-custom { font-size: 2.25rem; }
+      .text-5xl-custom { font-size: 3rem; }
+      .text-6xl-custom { font-size: 3.75rem; }
+      .text-7xl-custom { font-size: 4.5rem; }
+      .text-8xl-custom { font-size: 6rem; }
+
+      /* Tombol Beranda */
+      .home-float {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        z-index: 2000;
+      }
+
+      .btn-home {
+        background: white;
+        border: 2px solid var(--warna-sampul);
+        padding: 8px 15px;
+        border-radius: 50px;
+        font-weight: 600;
+        color: var(--warna-sampul);
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        transition: 0.3s;
+      }
+
+      .btn-home:hover {
+        background: var(--warna-sampul);
+        color: white;
+        transform: scale(1.05);
+      }
+
+      /* Container agar buku tetap di tengah */
+      .book-wrapper {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        height: 100%;
+        transform: translateX(0);
+        transition: transform 0.5s ease-in-out;
+        position: relative;
+        z-index: 10; /* Berada di atas ikon background */
+      }
+
+      .book-wrapper.opened {
+        transform: translateX(210px); /* Diperbaiki agar pas di tengah pada desktop (setengah dari 420px) */
+      }
+
+      /* Kontrol Navigasi */
+      .controls {
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 1000;
+        display: flex;
+        gap: 15px;
+      }
+
+      .btn-page {
+        background: white;
+        border: 2px solid var(--warna-sampul);
+        padding: 10px 20px;
+        border-radius: 50px;
+        font-weight: 600;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        transition: 0.3s;
+        color: var(--warna-sampul);
+      }
+
+      .btn-page:hover {
+        transform: translateY(-3px);
+        background: var(--warna-sampul);
+        color: white;
+      }
+
+      /* Struktur Buku 3D */
+      .book {
+        position: relative;
+        width: 420px;
+        height: 580px;
+        transition: transform 0.5s;
+        transform-style: preserve-3d;
+      }
+
+      .page {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        background: var(--warna-kertas);
+        transform-origin: left;
+        transform-style: preserve-3d;
+        transition: transform 0.8s cubic-bezier(0.645, 0.045, 0.355, 1);
+        box-shadow: inset 3px 0 10px rgba(0, 0, 0, 0.1);
+        border-radius: 0 15px 15px 0;
+        z-index: 1;
+      }
+
+      .front,
+      .back {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        backface-visibility: hidden;
+        padding: 35px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        overflow-y: auto;
+      }
+
+      .back {
+        transform: rotateY(180deg);
+        background: #f8fafc;
+        border-radius: 15px 0 0 15px;
+        border-right: 2px solid #e2e8f0;
+      }
+
+      .page.flipped {
+        transform: rotateY(-180deg);
+      }
+
+      /* Desain Sampul */
+      #p1 {
+        z-index: 25;
+      }
+      #p1 .front {
+        background: var(--warna-sampul);
+        color: white;
+        border-radius: 0 15px 15px 0;
+        border: 10px double rgba(255, 255, 255, 0.1);
+        text-align: center;
+        justify-content: center;
+      }
+
+      /* Logo Area */
+      .logo-box {
+        width: 140px;
+        height: 140px;
+        background: rgba(255, 255, 255, 0.1);
+        border: 2px solid white;
+        border-radius: 20px;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+      }
+
+      .logo-box img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+      }
+
+      h1 {
+        font-size: 2rem;
+        margin-bottom: 15px;
+        font-family: "Patrick Hand", cursive;
+      }
+      h2 {
+        font-size: 1.4rem;
+        color: var(--warna-sampul);
+        border-bottom: 3px solid var(--warna-detail);
+        padding-bottom: 8px;
+        width: 100%;
+        font-weight: 600;
+      }
+      p {
+        font-size: 1rem;
+        line-height: 1.5;
+        text-align: left;
+        width: 100%;
+        color: #334155;
+      }
+
+      /* Image Box untuk Materi */
+      .img-container {
+        width: 100%;
+        height: 160px;
+        background: #eff6ff;
+        border: 2px solid #bfdbfe;
+        margin: 12px 0;
+        border-radius: 12px;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .img-container img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .note-box {
+        background: #fef3c7;
+        padding: 12px;
+        border-radius: 10px;
+        font-size: 0.85rem;
+        border-left: 5px solid var(--warna-detail);
+        margin-top: 10px;
+        width: 100%;
+        color: #92400e;
+      }
+
+      .math-bubble {
+        background: var(--warna-sampul);
+        color: white;
+        padding: 8px 15px;
+        border-radius: 15px;
+        font-weight: bold;
+        display: inline-block;
+        margin: 5px 0;
+      }
+
+      .music-float {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: white;
+        padding: 10px;
+        border-radius: 50px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        z-index: 2000;
+      }
+
+      .flipped {
+        z-index: 1 !important;
+      }
+      .page:not(.flipped) {
+        z-index: calc(25 - var(--i));
+      }
+
+      /* === PERBAIKAN RESPONSIVE MOBILE & TABLET === */
+      @media (max-width: 768px) {
+        .book {
+          /* Lebar buku dibuat 44% dari layar. Saat terbuka jadi 88%, menyisakan margin estetik */
+          width: 44vw; 
+          height: 70vh; 
+          max-height: 550px;
+        }
+        
+        /* KUNCI 3D: Geser wrapper ke kanan sejauh setengah dari lebar buku (44vw / 2 = 22vw) */
+        .book-wrapper.opened {
+          transform: translateX(22vw);
+        }
+
+        /* Penyesuaian Ruang & Teks agar tidak sesak */
+        .front, .back {
+          padding: 15px;
+        }
+        h1 { font-size: 1.5rem; }
+        h2 { font-size: 1.2rem; }
+        p, ul, li { font-size: 0.85rem; }
+        
+        .img-container { 
+          height: 110px; 
+          margin: 8px 0;
+        }
+        .math-bubble { 
+          font-size: 0.9rem; 
+          padding: 6px 12px; 
+        }
+
+        /* Pindahkan letak tombol musik agar tidak tertutup tombol navigasi */
+        .music-float {
+          top: auto;
+          bottom: 75px; 
+          right: 15px;
+        }
+        
+        .controls {
+          bottom: 15px;
+        }
+        .btn-page {
+          padding: 8px 12px;
+          font-size: 0.85rem;
+        }
+      }
+
+      /* Khusus layar HP yang sangat sempit (misal di bawah 400px) */
+      @media (max-width: 400px) {
+        .book {
+          width: 47vw; /* Perlebar sedikit untuk memaksimalkan ruang baca */
+          height: 65vh;
+        }
+        .book-wrapper.opened {
+          transform: translateX(23.5vw); /* Tetap setengah dari lebar buku */
+        }
+        .front, .back {
+          padding: 10px;
+        }
+        p, ul, li { 
+          font-size: 0.75rem; 
+          margin-bottom: 8px; 
+        }
+        .img-container { 
+          height: 90px; 
+        }
+      }
+    </style>
+  </head>
+  <body>
+
+    <div class="floating-element bg-math-10 text-5xl-custom" style="top: 5%; left: 4%;">1</div>
+    <div class="floating-element bg-math-15 text-5xl-custom" style="top: 15%; left: 12%; animation-delay: 0.4s;">+</div>
+    <div class="floating-element bg-math-15 text-4xl-custom" style="top: 28%; left: 3%; animation-delay: 0.8s;"><i class="fas fa-calculator"></i></div>
+    <div class="floating-element bg-trophy-10 text-4xl-custom" style="top: 6%; left: 22%; animation-delay: 1.2s;"><i class="fas fa-trophy"></i></div>
+    <div class="floating-element bg-math-10 text-7xl-custom" style="top: 20%; left: 25%; animation-delay: 2s;">?</div>
+    <div class="floating-element bg-math-15 text-4xl-custom" style="top: 35%; left: 15%; animation-delay: 0.6s;">3</div>
+
+    <div class="floating-element bg-math-15 text-6xl-custom" style="bottom: 28%; left: 2%; animation-delay: 1.5s;">−</div>
+    <div class="floating-element bg-math-10 text-5xl-custom" style="bottom: 16%; left: 10%; animation-delay: 2.5s;">5</div>
+    <div class="floating-element bg-math-10 text-5xl-custom" style="bottom: 4%; left: 4%;"><i class="fas fa-circle"></i></div>
+    <div class="floating-element bg-math-15 text-4xl-custom" style="bottom: 6%; left: 20%; animation-delay: 0.9s;">7</div>
+    <div class="floating-element bg-math-10 text-4xl-custom" style="bottom: 38%; left: 9%; animation-delay: 1.8s;"><i class="fas fa-shapes"></i></div>
+    <div class="floating-element bg-math-15 text-5xl-custom" style="bottom: 22%; left: 24%; animation-delay: 3.1s;">×</div>
+
+    <div class="floating-element bg-math-15 text-4xl-custom" style="top: 4%; left: 46%; animation-delay: 1.1s;">2</div>
+    <div class="floating-element bg-math-10 text-5xl-custom" style="top: 14%; left: 35%; animation-delay: 2.3s;">=</div>
+    <div class="floating-element bg-math-10 text-4xl-custom" style="top: 12%; right: 36%; animation-delay: 0.5s;"><i class="fas fa-triangle-exclamation" style="transform: rotate(180deg);"></i></div>
+    <div class="floating-element bg-math-10 text-8xl-custom" style="bottom: 10%; left: 40%; animation-delay: 1.6s;">?</div>
+    <div class="floating-element bg-math-15 text-4xl-custom" style="bottom: 4%; left: 54%; animation-delay: 0.3s;">4</div>
+    <div class="floating-element bg-math-10 text-5xl-custom" style="bottom: 16%; right: 38%; animation-delay: 2.8s;">÷</div>
+
+    <div class="floating-element bg-trophy-10 text-5xl-custom" style="top: 6%; right: 5%; animation-delay: 0.7s;"><i class="fas fa-trophy"></i></div>
+    <div class="floating-element bg-math-10 text-5xl-custom" style="top: 18%; right: 14%; animation-delay: 1.3s;">6</div>
+    <div class="floating-element bg-math-15 text-5xl-custom" style="top: 4%; right: 24%; animation-delay: 2.1s;">+</div>
+    <div class="floating-element bg-math-10 text-4xl-custom" style="top: 28%; right: 3%; animation-delay: 0.2s;"><i class="fas fa-calculator"></i></div>
+    <div class="floating-element bg-math-10 text-6xl-custom" style="top: 16%; right: 25%; animation-delay: 1.9s;">?</div>
+    <div class="floating-element bg-math-15 text-5xl-custom" style="top: 36%; right: 14%; animation-delay: 3.0s;">8</div>
+
+    <div class="floating-element bg-math-15 text-5xl-custom" style="bottom: 26%; right: 2%; animation-delay: 2.4s;">=</div>
+    <div class="floating-element bg-math-10 text-4xl-custom" style="bottom: 14%; right: 12%;"><i class="fas fa-circle"></i></div>
+    <div class="floating-element bg-math-15 text-5xl-custom" style="bottom: 4%; right: 5%; animation-delay: 1.4s;">9</div>
+    <div class="floating-element bg-math-10 text-6xl-custom" style="bottom: 6%; right: 22%; animation-delay: 0.8s;">−</div>
+    <div class="floating-element bg-trophy-10 text-4xl-custom" style="bottom: 38%; right: 25%; animation-delay: 1.7s;"><i class="fas fa-trophy"></i></div>
+    <div class="floating-element bg-math-10 text-5xl-custom" style="bottom: 22%; right: 23%; animation-delay: 1.5s;">0</div>
+
+    <div class="home-float">
+      <a href="awal.html" class="btn-home" onclick="location.reload()">
+        🏠 <span>Beranda</span>
+      </a>
+    </div>
+
+    <div class="music-float">
+      <button
+        onclick="toggleMusic()"
+        id="mBtn"
+        style="border: none; background: none; font-size: 1.2rem"
+      >
+        🔇
+      </button>
+      <span id="mStatus" style="font-size: 0.7rem; font-weight: bold; color: #c0392b"
+        >MUSIK MATI</span
+      >
+    </div>
+
+    <audio id="bgMusic" loop>
+      <source src="laguku.mp3" type="audio/mpeg" />
+    </audio>
+
+    <div class="book-wrapper" id="bookWrapper">
+      <div class="book" id="book">
+        <div class="page" id="p1" style="--i: 0">
+          <div class="front" onclick="flipPage(1)">
+            <div class="logo-box">
+              <img
+                src="undiksha.png"
+                alt="Logo"
+                onerror="
+                  this.src = 'https://via.placeholder.com/150?text=Logo+Sekolah'
+                "
+              />
+            </div>
+            <h1>Etnomatika Bali</h1>
+            <p style="text-align: center; color: rgba(255, 255, 255, 0.9)">
+              Buku Interaktif Berhitung Etnomatematika Bali
+            </p>
+            <div class="mt-4" style="font-size: 0.8rem; opacity: 0.7">
+              Klik Sampul untuk Membuka
+            </div>
+          </div>
+          <div class="back" onclick="flipPage(1)">
+            <h2>🙏 Om Swastiastu!</h2>
+            <p>
+              Halo Anak Hebat! Selamat datang di buku pembelajaran etnomatika
+              ini. Kita akan belajar berhitung sambil melihat keindahan Bali.
+            </p>
+            <div class="img-container">
+              <img
+                src="awalku.png"
+                alt="Intro"
+                onerror="
+                  this.src =
+                    'https://via.placeholder.com/400x200?text=Foto+Anak+Bali'
+                "
+              />
+            </div>
+            <p>Siapkan dirimu untuk pembelajaran yang seru ya!</p>
+          </div>
+        </div>
+
+        <div class="page" id="p2" style="--i: 1" onclick="flipPage(2)">
+          <div class="front">
+            <h2>🔎 Apa itu Etnomatematika?</h2>
+            <p>
+              <b>Etnomatematika</b> adalah kata keren untuk menyebut
+              <i>"Matematika di dalam Budaya"</i>.
+            </p>
+            <div class="img-container">
+              <img
+                src="bali.jpg"
+                alt="Etnomatematika"
+                onerror="
+                  this.src =
+                    'https://via.placeholder.com/400x200?text=Budaya+Bali'
+                "
+              />
+            </div>
+            <p>
+              Artinya, kita belajar menjumlah dan mengurangi lewat benda-benda
+              yang ada di rumah, pura, atau tradisi kita di Bali.
+            </p>
+          </div>
+          <div class="back">
+            <h2>🌴 Matematika di Sekitar Kita</h2>
+            <p>Tahukah kamu? Kita menggunakan matematika saat:</p>
+            <ul>
+              <li>Menghitung tokoh Wayang Kulit.</li>
+              <li>Menghitung penari di atas panggung.</li>
+              <li>Membagi Sate Lilit dengan teman.</li>
+            </ul>
+            <div class="note-box">
+              Belajar matematika itu sama serunya dengan bermain di lingkungan
+              rumah kita!
+            </div>
+          </div>
+        </div>
+
+        <div class="page" id="p3" style="--i: 2" onclick="flipPage(3)">
+          <div class="front">
+            <h2>🌸 Menghitung Bunga Canang</h2>
+            <p>
+              Wayan menaruh <b>4</b> bunga merah dan <b>3</b> bunga kuning di
+              Canang Sari.
+            </p>
+            <div class="img-container">
+              <img
+                src="bunga.jpg"
+                alt="Canang"
+                onerror="
+                  this.src =
+                    'https://via.placeholder.com/400x200?text=Bunga+Canang'
+                "
+              />
+            </div>
+            <p>Berapa jumlah semua bunga tersebut?</p>
+            <div class="math-bubble">4 + 3 = 7</div>
+          </div>
+          <div class="back">
+            <h2>🕯️ Batang Dupa</h2>
+            <p>
+              Ibu menyiapkan <b>10</b> batang dupa. Setelah sembahyang,
+              <b>6</b> batang sudah habis terbakar.
+            </p>
+            <div class="img-container">
+              <img
+                src="dupa.jpg"
+                alt="Dupa"
+                onerror="
+                  this.src =
+                    'https://via.placeholder.com/400x200?text=Batang+Dupa'
+                "
+              />
+            </div>
+            <p>Berapa sisa dupa yang masih panjang?</p>
+            <div class="math-bubble">10 - 6 = 4</div>
+          </div>
+        </div>
+
+        <div class="page" id="p4" style="--i: 3" onclick="flipPage(4)">
+          <div class="front">
+            <h2>🍡 Jaja Laklak Manis</h2>
+            <p>
+              Putu makan <b>5</b> biji Jaja Laklak. Made makan <b>5</b> biji
+              Jaja Laklak juga.
+            </p>
+            <div class="img-container">
+              <img
+                src="laklak.jpg"
+                alt="Laklak"
+                onerror="
+                  this.src =
+                    'https://via.placeholder.com/400x200?text=Jaja+Laklak'
+                "
+              />
+            </div>
+            <p>Berapa jumlah laklak yang dimakan mereka berdua?</p>
+            <div class="math-bubble">5 + 5 = 10</div>
+          </div>
+          <div class="back">
+            <h2>🍢 Sate Lilit Lezat</h2>
+            <p>
+              Bapak membakar <b>6</b> tusuk sate ayam dan <b>4</b> tusuk sate
+              ikan.
+            </p>
+            <div class="img-container">
+              <img
+                src="sate.jpg"
+                alt="Sate"
+                onerror="
+                  this.src =
+                    'https://via.placeholder.com/400x200?text=Sate+Lilit'
+                "
+              />
+            </div>
+            <p>Berapa semua sate yang dibakar Bapak?</p>
+            <div class="math-bubble">6 + 4 = 10</div>
+          </div>
+        </div>
+
+        <div class="page" id="p5" style="--i: 4" onclick="flipPage(5)">
+          <div class="front">
+            <h2>🪙 Koleksi Pis Bolong</h2>
+            <p>
+              Nyoman punya <b>5</b> keping uang bolong. Kakak memberi
+              <b>4</b> keping lagi.
+            </p>
+            <div class="img-container">
+              <img
+                src="pis.jpg"
+                alt="Pis Bolong"
+                onerror="
+                  this.src =
+                    'https://via.placeholder.com/400x200?text=Uang+Kepeng'
+                "
+              />
+            </div>
+            <p>Berapa banyak uang bolong Nyoman sekarang?</p>
+            <div class="math-bubble">5 + 4 = 9</div>
+          </div>
+          <div class="back">
+            <h2>🎍 Janur Kuning</h2>
+            <p>
+              Untuk hiasan Penjor, ada <b>4</b> janur hijau dan <b>3</b> janur
+              kuning.
+            </p>
+            <div class="img-container">
+              <img
+                src="janur.jpg"
+                alt="Janur"
+                onerror="
+                  this.src =
+                    'https://via.placeholder.com/400x200?text=Janur+Penjor'
+                "
+              />
+            </div>
+            <p>Berapa jumlah seluruh janur tersebut?</p>
+            <div class="math-bubble">4 + 3 = 7</div>
+          </div>
+        </div>
+
+        <div class="page" id="p6" style="--i: 5" onclick="flipPage(6)">
+          <div class="front">
+            <h2>🎭 Wayang Kulit Bali</h2>
+            <p>
+              Seorang dalang membawa <b>9</b> buah wayang. Saat pertunjukan
+              dimulai, <b>5</b> wayang dipasang di layar.
+            </p>
+            <div class="img-container">
+              <img
+                src="wayangkulit.jpg"
+                alt="Wayang"
+                onerror="
+                  this.src =
+                    'https://via.placeholder.com/400x200?text=Wayang+Kulit+Bali'
+                "
+              />
+            </div>
+            <p>Berapa sisa wayang yang masih ada di dalam kotak?</p>
+            <div class="math-bubble">9 - 5 = 4</div>
+          </div>
+          <div class="back">
+            <h2>👹 Tokoh Wayang</h2>
+            <p>
+              Ada <b>10</b> tokoh pewayangan di atas meja. Bapak Dalang
+              merapikan <b>3</b> tokoh ke dalam kotak.
+            </p>
+            <div class="img-container">
+              <img
+                src="wayangtokoh.jpg"
+                alt="Tokoh Wayang"
+                onerror="
+                  this.src =
+                    'https://via.placeholder.com/400x200?text=Tokoh+Wayang'
+                "
+              />
+            </div>
+            <p>Berapa tokoh wayang yang masih tersisa di atas meja?</p>
+            <div class="math-bubble">10 - 3 = 7</div>
+          </div>
+        </div>
+
+        <div class="page" id="p7" style="--i: 6" onclick="flipPage(7)">
+          <div class="front">
+            <h2>💃 Penari Pendet</h2>
+            <p>
+              Ada <b>8</b> penari Pendet cantik yang sedang menari. Sebanyak
+              <b>3</b> penari sudah selesai menari dan keluar panggung.
+            </p>
+            <div class="img-container">
+              <img
+                src="penaripendet.jpg"
+                alt="Tari Pendet"
+                onerror="
+                  this.src =
+                    'https://via.placeholder.com/400x200?text=Tari+Pendet'
+                "
+              />
+            </div>
+            <p>Berapa penari yang masih menari di atas panggung?</p>
+            <div class="math-bubble">8 - 3 = 5</div>
+          </div>
+          <div class="back">
+            <h2>🔥 Tari Kecak</h2>
+            <p>
+              Di lingkaran Tari Kecak ada <b>7</b> penari utama. Sebanyak
+              <b>2</b> penari sedang beristirahat di pinggir.
+            </p>
+            <div class="img-container">
+              <img
+                src="penarikecak.jpg"
+                alt="Tari Kecak"
+                onerror="
+                  this.src =
+                    'https://via.placeholder.com/400x200?text=Tari+Kecak'
+                "
+              />
+            </div>
+            <p>Berapa jumlah penari utama yang masih menari di tengah?</p>
+            <div class="math-bubble">7 - 2 = 5</div>
+          </div>
+        </div>
+
+        <div class="page" id="p8" style="--i: 7" onclick="flipPage(8)">
+          <div class="back">
+            <h2>🎉 Selesai!</h2>
+            <p>
+              Kamu sudah berhasil menyelesaikan petualangan berhitung ini. Kamu
+              hebat sekali!
+            </p>
+            <div class="img-container">
+              <img
+                src="awalku.png"
+                alt="Finish"
+                onerror="
+                  this.src =
+                    'https://via.placeholder.com/400x200?text=Hore+Selesai!'
+                "
+              />
+            </div>
+            <p>Jangan lupa untuk selalu bersyukur dan rajin belajar ya!</p>
+            <button
+              class="btn btn-primary w-100 rounded-pill fw-bold"
+              style="background: var(--warna-sampul)"
+              onclick="window.location.href = 'flashcard.html'"
+            >
+              Mulai Kuis Seru!
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <button class="btn-page" onclick="prevPage()">⬅ Balik Halaman</button>
+      <button class="btn-page" onclick="nextPage()">Lanjut Halaman ➡</button>
+    </div>
+
+    <script>
+      let currentLoc = 1;
+      let nPages = 8;
+
+      function updateWrapperPosition() {
+        const wrapper = document.getElementById("bookWrapper");
+        if (currentLoc > 1) {
+          wrapper.classList.add("opened");
+        } else {
+          wrapper.classList.remove("opened");
+        }
+      }
+
+      function flipPage(id) {
+        const page = document.getElementById("p" + id);
+        if (!page.classList.contains("flipped")) {
+          page.classList.add("flipped");
+          currentLoc = id + 1;
+          updateWrapperPosition();
+        }
+      }
+
+      function nextPage() {
+        if (currentLoc <= nPages) {
+          const page = document.getElementById("p" + currentLoc);
+          page.classList.add("flipped");
+          currentLoc++;
+          updateWrapperPosition();
+        }
+      }
+
+      function prevPage() {
+        if (currentLoc > 1) {
+          currentLoc--;
+          const page = document.getElementById("p" + currentLoc);
+          page.classList.remove("flipped");
+          updateWrapperPosition();
+        }
+      }
+
+      const music = document.getElementById("bgMusic");
+      const mBtn = document.getElementById("mBtn");
+      const mStatus = document.getElementById("mStatus");
+      let playing = false;
+
+      window.addEventListener("load", () => {
+        music.play().then(() => {
+          playing = true;
+          mBtn.innerText = "🔊";
+          mStatus.innerText = "MUSIK AKTIF";
+          mStatus.style.color = "#1e3a8a";
+        }).catch(() => {});
+      });
+
+      function toggleMusic() {
+        if (!playing) {
+          music.play().catch(() => {});
+          mBtn.innerText = "🔊";
+          mStatus.innerText = "MUSIK AKTIF";
+          mStatus.style.color = "#1e3a8a";
+        } else {
+          music.pause();
+          mBtn.innerText = "🔇";
+          mStatus.innerText = "MUSIK MATI";
+          mStatus.style.color = "#c0392b";
+        }
+        playing = !playing;
+      }
+
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "ArrowRight") nextPage();
+        if (e.key === "ArrowLeft") prevPage();
+      });
+    </script>
+  </body>
+</html>
