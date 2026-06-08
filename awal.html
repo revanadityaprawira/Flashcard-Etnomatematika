@@ -575,34 +575,48 @@
 
       let playing = false;
 
-      window.addEventListener("load", () => {
-        music
-          .play()
-          .then(() => {
-            playing = true;
-            mBtn.innerText = "🔊";
-            statusText.innerText = "MUSIK AKTIF";
-            statusText.style.color = "#1e3a8a";
-          })
-          .catch(() => {});
-      });
-
-      function toggleMusic() {
-        if (!playing) {
-          music.play().catch(() => {});
-
+      // Fungsi pembantu untuk sinkronisasi tampilan tombol
+      function updateMusicUI(isPlaying) {
+        if (isPlaying) {
           mBtn.innerText = "🔊";
           statusText.innerText = "MUSIK AKTIF";
           statusText.style.color = "#1e3a8a";
         } else {
-          music.pause();
-
           mBtn.innerText = "🔇";
           statusText.innerText = "MUSIK MATI";
           statusText.style.color = "#c0392b";
         }
+      }
 
-        playing = !playing;
+      window.addEventListener("load", () => {
+        // Mencoba memutar otomatis (berhasil di Chrome jika MEI tinggi)
+        music
+          .play()
+          .then(() => {
+            playing = true;
+            updateMusicUI(true);
+          })
+          .catch(() => {
+            // Jika diblokir (pasti terjadi di Safari), kunci status tetap MATI dengan rapi
+            playing = false;
+            updateMusicUI(false);
+          });
+      });
+
+      function toggleMusic() {
+        if (!playing) {
+          music
+            .play()
+            .then(() => {
+              playing = true;
+              updateMusicUI(true);
+            })
+            .catch((err) => console.log("Gagal memutar audio:", err));
+        } else {
+          music.pause();
+          playing = false;
+          updateMusicUI(false);
+        }
       }
     </script>
   </body>
