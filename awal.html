@@ -568,7 +568,7 @@
       <p style="margin-top: 40px; color: #888; font-size: 0.9rem"></p>
     </div>
 
-    <script>
+<script>
       const music = document.getElementById("bgMusic");
       const mBtn = document.getElementById("mBtn");
       const statusText = document.getElementById("musicStatus");
@@ -590,8 +590,7 @@
 
       window.addEventListener("load", () => {
         // Mencoba memutar otomatis (berhasil di Chrome jika MEI tinggi)
-        music
-          .play()
+        music.play()
           .then(() => {
             playing = true;
             updateMusicUI(true);
@@ -605,8 +604,7 @@
 
       function toggleMusic() {
         if (!playing) {
-          music
-            .play()
+          music.play()
             .then(() => {
               playing = true;
               updateMusicUI(true);

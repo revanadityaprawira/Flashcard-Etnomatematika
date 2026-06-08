@@ -772,11 +772,19 @@
 
       function flipPage(id) {
         const page = document.getElementById("p" + id);
+        
+        // JIKA HALAMAN BELUM DIBALIK (Mengeklik halaman sebelah kanan untuk maju)
         if (!page.classList.contains("flipped")) {
           page.classList.add("flipped");
           currentLoc = id + 1;
-          updateWrapperPosition();
+        } 
+        // JIKA HALAMAN SUDAH DIBALIK (Mengeklik halaman sebelah kiri untuk kembali)
+        else {
+          page.classList.remove("flipped");
+          currentLoc = id;
         }
+        
+        updateWrapperPosition();
       }
 
       function nextPage() {
